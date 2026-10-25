@@ -30,40 +30,40 @@ public static class S1JeaneRuneShopPatch
 
     /// <summary>
     /// Canonical mapping of Suikoden 1 Rune IDs to Sealed Orb Item IDs (fuuinkyu).
-    /// Used as guaranteed fallback if native monsyo_fuuin_table is not yet initialized.
+    /// Used as guaranteed fallback and engine oversight override (e.g. Mother Earth, Thunder).
     /// </summary>
     private static readonly Dictionary<int, byte> CanonicalRuneToItemMap = new()
     {
-        [2] = 11,   // Fire Orb (hi_fuuinkyu)
-        [3] = 12,   // Water Orb (mizu_fuuinkyu)
-        [4] = 13,   // Wind Orb (kaze_fuuinkyu)
-        [5] = 14,   // Lightning Orb (kaminari_fuuinkyu)
-        [6] = 15,   // Earth Orb (tuti_fuuinkyu - Level 1)
-        [7] = 106,  // Resurrection Orb (hama_fuuinkyu)
-        [8] = 77,   // Boar Orb (pan_fuuinkyu)
-        [9] = 78,   // Shrike Orb (kas_fuuinkyu)
-        [10] = 79,  // Falcon Orb (vre_fuuinkyu)
-        [11] = 80,  // Blaze Orb (bel_fuuinkyu)
-        [12] = 81,  // Gadget Orb (jup_fuuinkyu)
-        [13] = 82,  // Clone Orb (wakemi_fuuinkyu)
-        [14] = 83,  // Double-Jab Orb (kaeshiba_fuuinkyu)
-        [15] = 84,  // Killer Orb (hissatsu_fuuinkyu)
-        [16] = 85,  // Counter Orb (mikiri_fuuinkyu)
-        [17] = 86,  // Spark Orb (shiden_fuuinkyu)
-        [18] = 87,  // Haziness Orb (oboro_fuuinkyu)
-        [19] = 88,  // Gale Orb (shippuu_fuuinkyu)
-        [20] = 89,  // Sunbeam Orb (komorebi_fuuinkyu)
-        [21] = 90,  // Speed Orb (shinkoho_fuuinkyu)
-        [23] = 91,  // Fortune Orb (koun_fuuinkyu)
-        [24] = 92,  // Prosperity Orb (kinun_fuuinkyu)
-        [25] = 93,  // Champion's Orb (ouja_fuuinkyu)
-        [26] = 94,  // Turtle Orb (kame_fuuinkyu)
-        [27] = 95,  // Phero Orb (fuero_fuuinkyu)
-        [28] = 107, // Rage Orb (rekka_fuuinkyu)
-        [29] = 108, // Flowing Orb (ryuusui_fuuinkyu)
-        [30] = 109, // Cyclone Orb (senpuu_fuuinkyu)
-        [31] = 110, // Mother Earth Orb (daiti_fuuinkyu)
-        [32] = 111  // Thunder Orb (raimei_fuuinkyu)
+        [2] = 62,   // Fire Orb (hi_fuuinkyu)
+        [3] = 63,   // Water Orb (mizu_fuuinkyu)
+        [4] = 64,   // Wind Orb (kaze_fuuinkyu)
+        [5] = 65,   // Lightning Orb (kaminari_fuuinkyu)
+        [6] = 66,   // Earth Orb (tuti_fuuinkyu)
+        [7] = 163,  // Resurrection Orb (hama_fuuinkyu)
+        [8] = 135,  // Boar Orb (sisi_fuuinkyu)
+        [9] = 136,  // Shrike Orb (mozu_fuuinkyu)
+        [10] = 137, // Falcon Orb (hayabusa_fuuinkyu)
+        [11] = 138, // Blaze Orb (homura_fuuinkyu)
+        [12] = 139, // Gadget Orb (karakuri_fuuinkyu)
+        [13] = 140, // Clone Orb (wakemi_fuuinkyu)
+        [14] = 141, // Double-Jab Orb (kaeshiba_fuuinkyu)
+        [15] = 142, // Killer Orb (hissatsu_fuuinkyu)
+        [16] = 143, // Counter Orb (mikiri_fuuinkyu)
+        [17] = 144, // Spark Orb (shiden_fuuinkyu)
+        [18] = 145, // Haziness Orb (oboro_fuuinkyu)
+        [19] = 146, // Gale Orb (shippuu_fuuinkyu)
+        [20] = 147, // Sunbeam Orb (komorebi_fuuinkyu)
+        [21] = 148, // Speed Orb (shinkoho_fuuinkyu)
+        [23] = 150, // Fortune Orb (koun_fuuinkyu)
+        [24] = 151, // Prosperity Orb (kinun_fuuinkyu)
+        [25] = 152, // Champion's Orb (ouja_fuuinkyu)
+        [26] = 153, // Turtle Orb (kame_fuuinkyu)
+        [27] = 152, // Phero Orb (fuero_fuuinkyu)
+        [28] = 164, // Rage Orb (rekka_fuuinkyu)
+        [29] = 165, // Flowing Orb (ryuusui_fuuinkyu)
+        [30] = 166, // Cyclone Orb (senpuu_fuuinkyu)
+        [31] = 167, // Mother Earth Orb (daiti_fuuinkyu)
+        [32] = 168  // Thunder Orb (raimei_fuuinkyu)
     };
 
     /// <summary>
@@ -283,15 +283,32 @@ public static class S1JeaneRuneShopPatch
             try
             {
                 int itemId = 0;
-                if (!fuuinMap.TryGetValue(runeId, out itemId) || itemId <= 0)
+
+                // 1. Direct canonical override for known engine bugs:
+                // Rune 31 (Mother Earth) is bugged to 169 (garakuta) in native table; should be 167 (daiti_fuuinkyu)
+                // Rune 32 (Thunder) is omitted entirely from native table; should be 168 (raimei_fuuinkyu)
+                // Rune 7 (Resurrection) should map cleanly to 163 (hama_fuuinkyu)
+                if (runeId == 31) itemId = 167; // Mother Earth Orb
+                else if (runeId == 32) itemId = 168; // Thunder Orb
+                else if (runeId == 7) itemId = 163; // Resurrection Orb
+                else
                 {
-                    itemId = S1::h_monsyo_c.GetMonsyoItemId(runeId);
+                    if (!fuuinMap.TryGetValue(runeId, out itemId) || itemId <= 0)
+                    {
+                        itemId = S1::h_monsyo_c.GetMonsyoItemId(runeId);
+                    }
+
+                    if (itemId <= 0 && CanonicalRuneToItemMap.TryGetValue(runeId, out byte fallbackId))
+                    {
+                        itemId = fallbackId;
+                    }
                 }
 
-                if (itemId <= 0 && CanonicalRuneToItemMap.TryGetValue(runeId, out byte fallbackId))
-                {
-                    itemId = fallbackId;
-                }
+                // Strict safeguards: exclude non-orb ranges (Old Books 105-112, quest items, junk 169)
+                if (itemId >= 105 && itemId <= 112)
+                    continue;
+                if (itemId == 169)
+                    continue;
 
                 if (itemId > 0 && itemId <= 255)
                 {
