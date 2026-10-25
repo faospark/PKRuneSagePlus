@@ -30,40 +30,41 @@ public static class S1JeaneRuneShopPatch
 
     /// <summary>
     /// Canonical mapping of Suikoden 1 Rune IDs to Sealed Orb Item IDs (fuuinkyu).
-    /// Used as guaranteed fallback and engine oversight override (e.g. Mother Earth, Thunder).
+    /// Used as guaranteed primary lookup to fix Konami's native engine off-by-one bug in monsyo_fuuin_table
+    /// (where True Speed Rune 22 shifted Runes 23-31 and omitted Thunder Rune 32).
     /// </summary>
     private static readonly Dictionary<int, byte> CanonicalRuneToItemMap = new()
     {
-        [2] = 62,   // Fire Orb (hi_fuuinkyu)
-        [3] = 63,   // Water Orb (mizu_fuuinkyu)
-        [4] = 64,   // Wind Orb (kaze_fuuinkyu)
-        [5] = 65,   // Lightning Orb (kaminari_fuuinkyu)
-        [6] = 66,   // Earth Orb (tuti_fuuinkyu)
-        [7] = 163,  // Resurrection Orb (hama_fuuinkyu)
-        [8] = 135,  // Boar Orb (sisi_fuuinkyu)
-        [9] = 136,  // Shrike Orb (mozu_fuuinkyu)
-        [10] = 137, // Falcon Orb (hayabusa_fuuinkyu)
-        [11] = 138, // Blaze Orb (homura_fuuinkyu)
-        [12] = 139, // Gadget Orb (karakuri_fuuinkyu)
-        [13] = 140, // Clone Orb (wakemi_fuuinkyu)
-        [14] = 141, // Double-Jab Orb (kaeshiba_fuuinkyu)
-        [15] = 142, // Killer Orb (hissatsu_fuuinkyu)
-        [16] = 143, // Counter Orb (mikiri_fuuinkyu)
-        [17] = 144, // Spark Orb (shiden_fuuinkyu)
-        [18] = 145, // Haziness Orb (oboro_fuuinkyu)
-        [19] = 146, // Gale Orb (shippuu_fuuinkyu)
-        [20] = 147, // Sunbeam Orb (komorebi_fuuinkyu)
-        [21] = 148, // Speed Orb (shinkoho_fuuinkyu)
-        [23] = 150, // Fortune Orb (koun_fuuinkyu)
-        [24] = 151, // Prosperity Orb (kinun_fuuinkyu)
-        [25] = 152, // Champion's Orb (ouja_fuuinkyu)
-        [26] = 153, // Turtle Orb (kame_fuuinkyu)
-        [27] = 152, // Phero Orb (fuero_fuuinkyu)
-        [28] = 164, // Rage Orb (rekka_fuuinkyu)
-        [29] = 165, // Flowing Orb (ryuusui_fuuinkyu)
-        [30] = 166, // Cyclone Orb (senpuu_fuuinkyu)
-        [31] = 167, // Mother Earth Orb (daiti_fuuinkyu)
-        [32] = 168  // Thunder Orb (raimei_fuuinkyu)
+        [2]  = 62,  // Fire Orb (hi_fuuinkyu) - 5,000 potch
+        [3]  = 63,  // Water Orb (mizu_fuuinkyu) - 7,000 potch
+        [4]  = 64,  // Wind Orb (kaze_fuuinkyu) - 5,000 potch
+        [5]  = 65,  // Lightning Orb (kaminari_fuuinkyu) - 8,000 potch
+        [6]  = 66,  // Earth Orb (tuti_fuuinkyu) - 6,000 potch
+        [7]  = 164, // Resurrection Orb (hama_fuuinkyu) - 6,000 potch
+        [8]  = 135, // Boar Orb (sisi_fuuinkyu) - 3,000 potch
+        [9]  = 136, // Shrike Orb (mozu_fuuinkyu) - 4,000 potch
+        [10] = 137, // Falcon Orb (hayabusa_fuuinkyu) - 7,000 potch
+        [11] = 138, // Blaze Orb (homura_fuuinkyu) - 10,000 potch
+        [12] = 139, // Gadget Orb (karakuri_fuuinkyu) - 5,000 potch
+        [13] = 140, // Clone Orb (wakemi_fuuinkyu) - 5,000 potch
+        [14] = 141, // Double-Jab Orb (kaeshiba_fuuinkyu) - 7,000 potch
+        [15] = 142, // Killer Orb (hissatsu_fuuinkyu) - 8,000 potch
+        [16] = 143, // Counter Orb (mikiri_fuuinkyu) - 6,000 potch
+        [17] = 144, // Spark Orb (shiden_fuuinkyu) - 7,000 potch
+        [18] = 145, // Haziness Orb (oboro_fuuinkyu) - 8,000 potch
+        [19] = 146, // Gale Orb (shippuu_fuuinkyu) - 6,000 potch
+        [20] = 147, // Sunbeam Orb (komorebi_fuuinkyu) - 10,000 potch
+        [21] = 148, // Speed Orb (shinkoho_fuuinkyu) - 6,000 potch
+        [23] = 149, // Fortune Orb (koun_fuuinkyu) - 50,000 potch
+        [24] = 150, // Prosperity Orb (kinun_fuuinkyu) - 50,000 potch
+        [25] = 151, // Champion's Orb (ouja_fuuinkyu) - 200,000 potch
+        [26] = 152, // Turtle Orb (kame_fuuinkyu) - 15,000 potch
+        [27] = 153, // Phero Orb (fuero_fuuinkyu) - 50,000 potch
+        [28] = 165, // Rage Orb (rekka_fuuinkyu) - 15,000 potch
+        [29] = 166, // Flowing Orb (ryuusui_fuuinkyu) - 15,000 potch
+        [30] = 167, // Cyclone Orb (senpuu_fuuinkyu) - 15,000 potch
+        [31] = 168, // Mother Earth Orb (daiti_fuuinkyu) - 15,000 potch
+        [32] = 169  // Thunder Orb (raimei_fuuinkyu) - 15,000 potch
     };
 
     /// <summary>
@@ -284,38 +285,34 @@ public static class S1JeaneRuneShopPatch
             {
                 int itemId = 0;
 
-                // 1. Direct canonical override for known engine bugs:
-                // Rune 31 (Mother Earth) is bugged to 169 (garakuta) in native table; should be 167 (daiti_fuuinkyu)
-                // Rune 32 (Thunder) is omitted entirely from native table; should be 168 (raimei_fuuinkyu)
-                // Rune 7 (Resurrection) should map cleanly to 163 (hama_fuuinkyu)
-                if (runeId == 31) itemId = 167; // Mother Earth Orb
-                else if (runeId == 32) itemId = 168; // Thunder Orb
-                else if (runeId == 7) itemId = 163; // Resurrection Orb
+                // 1. Direct canonical lookup (fixes native off-by-one engine bug where Rune 22 shifted Runes 23-31 and omitted 32):
+                if (CanonicalRuneToItemMap.TryGetValue(runeId, out byte canonicalId))
+                {
+                    itemId = canonicalId;
+                }
+                else if (fuuinMap.TryGetValue(runeId, out int mappedId) && mappedId > 0)
+                {
+                    itemId = mappedId;
+                }
                 else
                 {
-                    if (!fuuinMap.TryGetValue(runeId, out itemId) || itemId <= 0)
-                    {
-                        itemId = S1::h_monsyo_c.GetMonsyoItemId(runeId);
-                    }
-
-                    if (itemId <= 0 && CanonicalRuneToItemMap.TryGetValue(runeId, out byte fallbackId))
-                    {
-                        itemId = fallbackId;
-                    }
+                    itemId = S1::h_monsyo_c.GetMonsyoItemId(runeId);
                 }
 
-                // Strict safeguards: exclude non-orb ranges (Old Books 105-112, quest items, junk 169)
-                if (itemId >= 105 && itemId <= 112)
-                    continue;
-                if (itemId == 169)
+                // Strict whitelist: Only allow authentic Sealed Orbs (fuuinkyu)
+                // 62-66: Basic elementals (Fire, Water, Wind, Lightning, Earth)
+                // 135-153: Combat / passive orbs (Boar through Phero)
+                // 164-169: Advanced / high orbs (Resurrection, Rage, Flowing, Cyclone, Mother Earth, Thunder)
+                bool isValidOrb = (itemId >= 62 && itemId <= 66) ||
+                                  (itemId >= 135 && itemId <= 153) ||
+                                  (itemId >= 164 && itemId <= 169);
+
+                if (!isValidOrb)
                     continue;
 
-                if (itemId > 0 && itemId <= 255)
-                {
-                    byte bId = (byte)itemId;
-                    if (!itemIds.Contains(bId))
-                        itemIds.Add(bId);
-                }
+                byte bId = (byte)itemId;
+                if (!itemIds.Contains(bId))
+                    itemIds.Add(bId);
             }
             catch { }
         }
