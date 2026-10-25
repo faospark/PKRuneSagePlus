@@ -95,3 +95,4 @@ public static class SajahShopUnlockPatch
             Plugin.Log.LogInfo("[PKRuneSagePlus] Sajah Village rare item vendor unlocked early in vj17!");
     }
 }
+
