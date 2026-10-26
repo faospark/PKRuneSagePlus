@@ -13,7 +13,7 @@ namespace PKRuneSagePlus.Patches;
 /// Suikoden I: Castle Rune Master (Jeane) Shop Expansion Patch.
 /// Re-indexes Jeane's menu to: [0] Attach, [1] Remove, [2] Buy, [3] Exit.
 /// Selecting "Buy" invokes the native item purchase flow (S1::h_omise_c),
-/// selling Rune Crystals progressively unlocked from town rune shops visited across the world.
+/// selling Rune Crystals progressively unlocked as Toran Castle expands (Levels 1 through 4).
 /// Seamlessly compatible with direct in-castle interaction and remote access.
 /// </summary>
 public static class S1JeaneRuneShopPatch
@@ -24,9 +24,6 @@ public static class S1JeaneRuneShopPatch
     private static Il2CppStructArray<int> _cachedMenuMsgs = null;
     private static S1::OMISE_DATA _cachedMonsyoData = null;
     private static S1::COMMAND_FUNC_TABLE _activeSubShopDelegate = null;
-
-    // Track towns visited in real-time
-    private static readonly HashSet<string> VisitedTownCodes = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Canonical mapping of Suikoden 1 Rune IDs to Sealed Orb Item IDs (fuuinkyu).
@@ -67,54 +64,6 @@ public static class S1JeaneRuneShopPatch
         [32] = 169  // Thunder Orb (raimei_fuuinkyu) - 15,000 potch
     };
 
-    /// <summary>
-    /// Town Rune Offerings mapping (Option A - Progressive Chandler style).
-    /// Maps town area codes to canonical rune IDs:
-    /// 2=Fire, 3=Water, 4=Wind, 5=Lightning, 6=Earth (Level 1), 15=Killer, 25=Champion.
-    /// </summary>
-    private static readonly Dictionary<string, int[]> TownRuneCatalog = new(StringComparer.OrdinalIgnoreCase)
-    {
-        // Gregminster (Imperial Capital - available from prologue): Water, Wind, Lightning
-        ["va"] = new[] { 3, 4, 5 },
-        ["gregminster"] = new[] { 3, 4, 5 },
-
-        // Lenankamp: Fire, Water, Wind
-        ["vc"] = new[] { 2, 3, 4 },
-        ["lenankamp"] = new[] { 2, 3, 4 },
-
-        // Kaku: Water
-        ["vd2"] = new[] { 3 },
-        ["kaku"] = new[] { 3 },
-
-        // Kouan: Fire, Earth
-        ["vd1"] = new[] { 2, 6 },
-        ["kouan"] = new[] { 2, 6 },
-
-        // Sarady: Water, Wind, Earth
-        ["vb3"] = new[] { 3, 4, 6 },
-        ["sarady"] = new[] { 3, 4, 6 },
-
-        // Antei: Lightning, Wind
-        ["vh"] = new[] { 5, 4 },
-        ["antei"] = new[] { 5, 4 },
-
-        // Rikon: Fire, Water
-        ["vi"] = new[] { 2, 3 },
-        ["rikon"] = new[] { 2, 3 },
-
-        // Warriors' Village: Killer Rune, Wind
-        ["vj"] = new[] { 15, 4 },
-        ["warriors"] = new[] { 15, 4 },
-
-        // Kirov: Fire, Earth
-        ["vk"] = new[] { 2, 6 },
-        ["kirov"] = new[] { 2, 6 },
-
-        // Qlon Temple / Seek Valley: Champion
-        ["vl"] = new[] { 25 },
-        ["qlon"] = new[] { 25 }
-    };
-
     public static void Initialize(Harmony harmony)
     {
         if (Plugin.Config == null || !Plugin.Config.EnableS1JeaneRuneShop.Value)
@@ -133,130 +82,63 @@ public static class S1JeaneRuneShopPatch
     }
 
     /// <summary>
-    /// Tracks town visits as Tir travels between maps.
-    /// </summary>
-    public static void OnMapLoaded(string mapName)
-    {
-        if (string.IsNullOrEmpty(mapName))
-            return;
-
-        string lower = mapName.ToLowerInvariant();
-        VisitedTownCodes.Add(lower);
-
-        // Extract 2-letter area prefix (e.g. "vc" from "vc1", "vd" from "vd1")
-        if (lower.Length >= 2)
-        {
-            VisitedTownCodes.Add(lower.Substring(0, 2));
-        }
-    }
-
-    /// <summary>
-    /// Evaluates which Rune Crystals Tir has unlocked based on visited town rune shops and story progression.
+    /// Evaluates which Rune Crystals Tir has unlocked based on Toran Castle expansion level.
     /// </summary>
     public static byte[] GetUnlockedRuneItemIds()
     {
         var unlockedRuneIds = new HashSet<int>();
 
-        // 1. Starter / Base elemental catalog (always unlocked)
-        unlockedRuneIds.Add(2); // Fire
-        unlockedRuneIds.Add(3); // Water
-        unlockedRuneIds.Add(4); // Wind
-        unlockedRuneIds.Add(5); // Lightning
-        unlockedRuneIds.Add(6); // Earth (Level 1)
+        // 1. Castle Level 1 (Baseline / Default): Basic Elementals & Fortune/Prosperity
+        unlockedRuneIds.Add(2);  // Fire
+        unlockedRuneIds.Add(3);  // Water
+        unlockedRuneIds.Add(4);  // Wind
+        unlockedRuneIds.Add(5);  // Lightning
+        unlockedRuneIds.Add(6);  // Earth (Level 1)
+        unlockedRuneIds.Add(23); // Fortune
+        unlockedRuneIds.Add(24); // Prosperity
 
-        // 2. Check all visited towns
-        foreach (var kvp in TownRuneCatalog)
-        {
-            if (VisitedTownCodes.Contains(kvp.Key))
-            {
-                foreach (int runeId in kvp.Value)
-                    unlockedRuneIds.Add(runeId);
-            }
-        }
-
-        // 3. Check save data point checks (all_point_data / point_chk)
-        try
-        {
-            var pointData = S1::Event_c.all_point_data;
-            if (pointData != null && pointData.Count > 0)
-            {
-                for (int i = 0; i < pointData.Count; i++)
-                {
-                    var pop = pointData[i];
-                    if (pop != null && S1::Event_c.point_chk(pop))
-                    {
-                        // Pop area_no maps to visited area
-                        // Area mappings in S1:
-                        // 1=Gregminster, 2=Sarady, 3=Lenankamp, 4=Kouan/Kaku, 7=Antei, 8=Rikon, 9=Warriors, 10=Kirov, 11=Qlon
-                        int area = pop.area_no;
-                        if (area == 3) { unlockedRuneIds.Add(2); unlockedRuneIds.Add(3); unlockedRuneIds.Add(4); } // Lenankamp: Fire, Water, Wind
-                        else if (area == 4) { unlockedRuneIds.Add(2); unlockedRuneIds.Add(6); } // Kouan: Fire, Earth
-                        else if (area == 2) { unlockedRuneIds.Add(3); unlockedRuneIds.Add(4); unlockedRuneIds.Add(6); } // Sarady: Water, Wind, Earth
-                        else if (area == 7) { unlockedRuneIds.Add(5); unlockedRuneIds.Add(4); } // Antei: Lightning, Wind
-                        else if (area == 8) { unlockedRuneIds.Add(2); unlockedRuneIds.Add(3); } // Rikon: Fire, Water
-                        else if (area == 9) { unlockedRuneIds.Add(15); unlockedRuneIds.Add(4); } // Warriors: Killer, Wind
-                        else if (area == 10) { unlockedRuneIds.Add(2); unlockedRuneIds.Add(6); } // Kirov: Fire, Earth
-                        else if (area == 11) { unlockedRuneIds.Add(25); } // Qlon: Champion
-                    }
-                }
-            }
-        }
-        catch { }
-
-        // 4. Toran Castle Level progression (unlocks higher rune tiers as castle expands)
+        int castleLevel = 1;
         try
         {
             var gw = S1::OldSrcBase.game_work;
             if (gw != null && gw.shiro_data != null)
             {
-                int castleLevel = gw.shiro_data.level;
-
-                // Castle Level 1: Basic Elementals & Fortune/Prosperity
-                if (castleLevel >= 1)
-                {
-                    unlockedRuneIds.Add(2);  // Fire
-                    unlockedRuneIds.Add(3);  // Water
-                    unlockedRuneIds.Add(4);  // Wind
-                    unlockedRuneIds.Add(5);  // Lightning
-                    unlockedRuneIds.Add(6);  // Earth (Level 1)
-                    unlockedRuneIds.Add(23); // Fortune
-                    unlockedRuneIds.Add(24); // Prosperity
-                }
-
-                // Castle Level 2: Advanced Combat & Utility
-                if (castleLevel >= 2)
-                {
-                    unlockedRuneIds.Add(7);  // Resurrection
-                    unlockedRuneIds.Add(13); // Clone
-                    unlockedRuneIds.Add(14); // Double-Jab
-                    unlockedRuneIds.Add(15); // Killer
-                    unlockedRuneIds.Add(16); // Counter
-                    unlockedRuneIds.Add(17); // Spark
-                    unlockedRuneIds.Add(18); // Haziness
-                    unlockedRuneIds.Add(19); // Gale
-                    unlockedRuneIds.Add(27); // Phero (Pheromone)
-                }
-
-                // Castle Level 3: Advanced High-Tier Magic Runes
-                if (castleLevel >= 3)
-                {
-                    unlockedRuneIds.Add(28); // Rage
-                    unlockedRuneIds.Add(29); // Flowing
-                    unlockedRuneIds.Add(30); // Cyclone
-                    unlockedRuneIds.Add(31); // Mother Earth
-                    unlockedRuneIds.Add(32); // Thunder
-                }
-
-                // Castle Level 4: Master Runes
-                if (castleLevel >= 4)
-                {
-                    unlockedRuneIds.Add(20); // Sunbeam
-                    unlockedRuneIds.Add(25); // Champion's
-                    unlockedRuneIds.Add(26); // Turtle
-                }
+                castleLevel = gw.shiro_data.level;
             }
         }
         catch { }
+
+        // 2. Castle Level 2: Advanced Combat & Utility
+        if (castleLevel >= 2)
+        {
+            unlockedRuneIds.Add(7);  // Resurrection
+            unlockedRuneIds.Add(13); // Clone
+            unlockedRuneIds.Add(14); // Double-Jab
+            unlockedRuneIds.Add(15); // Killer
+            unlockedRuneIds.Add(16); // Counter
+            unlockedRuneIds.Add(17); // Spark
+            unlockedRuneIds.Add(18); // Haziness
+            unlockedRuneIds.Add(19); // Gale
+            unlockedRuneIds.Add(27); // Phero (Pheromone)
+        }
+
+        // 3. Castle Level 3: Advanced High-Tier Magic Runes
+        if (castleLevel >= 3)
+        {
+            unlockedRuneIds.Add(28); // Rage
+            unlockedRuneIds.Add(29); // Flowing
+            unlockedRuneIds.Add(30); // Cyclone
+            unlockedRuneIds.Add(31); // Mother Earth
+            unlockedRuneIds.Add(32); // Thunder
+        }
+
+        // 4. Castle Level 4: Master Runes
+        if (castleLevel >= 4)
+        {
+            unlockedRuneIds.Add(20); // Sunbeam
+            unlockedRuneIds.Add(25); // Champion's
+            unlockedRuneIds.Add(26); // Turtle
+        }
 
         // Convert Rune IDs to exact Item IDs via game's native GetMonsyoItemId with monsyo_fuuin_table lookup and canonical fallback
         var itemIds = new List<byte>();
@@ -688,24 +570,6 @@ public static class S1JeaneRuneShopPatch
         _isSubShopActive = false;
         _hasEnteredOmiseKau = false;
         _activeSubShopDelegate = null;
-    }
-
-    /// <summary>
-    /// Monitors village transitions in Suikoden 1 to automatically register visited town rune shops.
-    /// </summary>
-    [HarmonyPatch(typeof(S1::Village_c), nameof(S1::Village_c.village_main))]
-    [HarmonyPrefix]
-    public static void Village_village_main_Prefix(S1::Village_c __instance)
-    {
-        try
-        {
-            string vName = S1::Village_c.get_village_name();
-            if (!string.IsNullOrEmpty(vName))
-            {
-                OnMapLoaded(vName);
-            }
-        }
-        catch { }
     }
 
     // =========================================================================

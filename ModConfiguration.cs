@@ -23,7 +23,7 @@ public sealed class ModConfiguration
             "Suikoden 1 Rune Sage",
             "EnableS1JeaneRuneShop",
             true,
-            "Expands Jeane's Castle Rune Master menu with a 'Buy' option (Attach, Remove, Buy, Exit). She acts as the Chandler of Runes, progressively selling Rune Crystals from town rune shops visited across the world."
+            "Expands Jeane's Castle Rune Master menu with a 'Buy' option (Attach, Remove, Buy, Exit). She acts as the Chandler of Runes, progressively selling Rune Crystals unlocked as Toran Castle expands (Levels 1–4)."
         );
 
         UnlockSajahRareShopEarly = _config.Bind(

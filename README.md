@@ -14,8 +14,7 @@ Runes represent the core magic and combat customization system in the Suikoden s
 - **Scattered Specialty Runes**: Specialty runes (Killer, Champion, Clone, Spark, Gale, Haziness) are scattered across far-flung settlements (Warriors' Village, Qlon Temple, Antei, Kirov) or locked away behind late-game sidequests.
 - **How PKRuneSagePlus Solves This**:
   - Re-indexes Jeane's Toran Castle menu to a native 4-choice layout: `[0] Attach`, `[1] Remove`, `[2] Buy`, and `[3] Exit`.
-  - Turns Jeane into the castle's **Chandler of Runes**: her shop dynamically offers all base elemental rune crystals and progressively unlocks crystals from every town rune shop Tir visits across the world.
-  - Progression also scales with **Toran Castle's expansion tiers** (Levels 1 through 4), unlocking advanced combat, utility, and high-tier elemental runes as your army expands.
+  - Turns Jeane into the castle's **Chandler of Runes**: her shop dynamically offers base elemental rune crystals and progressively scales with **Toran Castle's expansion tiers** (Levels 1 through 4), unlocking advanced combat, utility, and high-tier elemental runes as your army expands.
   - Selecting "Buy" seamlessly invokes the native shop purchasing flow (`S1::h_omise_c`), complete with item icons, prices, inventory counts, and authentic sound effects.
 
 ---
@@ -41,10 +40,11 @@ Runes represent the core magic and combat customization system in the Suikoden s
   - `[1] Remove`
   - `[2] Buy`
   - `[3] Exit`
-- **Progressive World Catalog**:
-  - **Base Elementals**: Fire, Water, Wind, Lightning, and Earth crystals available immediately.
-  - **Visited Town Offerings**: Automatically registers visited rune shops (Gregminster, Lenankamp, Kaku, Kouan, Sarady, Antei, Rikon, Warriors' Village, Kirov, Qlon Temple).
-  - **Castle Level Scaling**: Expands to higher-tier runes (Resurrection, Killer, Spark, Gale, Rage, Flowing, Cyclone, Mother Earth, Thunder, Champion's, Turtle) as Toran Castle grows.
+- **Progressive Castle Catalog**:
+  - **Level 1 (1–29 Stars)**: Fire, Water, Wind, Lightning, Earth, Fortune, and Prosperity crystals available immediately upon founding the castle.
+  - **Level 2 (30–59 Stars)**: Expands to advanced combat and utility runes (Resurrection, Killer, Spark, Counter, Clone, Double-Jab, Gale, Haziness, Phero).
+  - **Level 3 (60–89 Stars)**: Unlocks devastating ultimate magic runes (Rage, Flowing, Cyclone, Mother Earth, Thunder).
+  - **Level 4 (90–108 Stars)**: Unlocks master runes (Sunbeam, Champion's, Turtle).
 - **Native Input & Audio**:
   - Full analog stick, D-Pad, and keyboard navigation with proper boundary clamping.
   - Authentic Suikoden sound effects for cursor movement, confirmation, and cancellation.
@@ -59,40 +59,18 @@ Runes represent the core magic and combat customization system in the Suikoden s
 
 ## Suikoden I: Jeane's Castle Rune Catalog & Progression
 
-Jeane's inventory dynamically combines two parallel progression tracks: **World Exploration (Visited Towns)** and **Toran Castle Expansion (Recruited Stars of Destiny)**. Native pricing, icons, descriptions, and purchase dialogues are driven automatically by the game engine's internal item tables (`h_omise_c`).
+Jeane's inventory scales dynamically with **Toran Castle Expansion (Recruited Stars of Destiny)** across 4 distinct tiers. Native pricing, icons, descriptions, and purchase dialogues are driven automatically by the game engine's internal item tables (`h_omise_c`).
 
-### 1. Progression by Toran Castle Expansion Tier
+### Progression by Toran Castle Expansion Tier
 
 As Tir recruits more of the 108 Stars of Destiny, Toran Castle grows in size and prestige, unlocking higher tiers of combat, utility, and advanced magic runes in Jeane's shop:
 
 | Castle Level | Recruits Milestone | Newly Unlocked Rune Crystals (Sealed Orbs) | Primary In-Game Effects / Role |
 | :--- | :--- | :--- | :--- |
 | **Level 1** | Castle Founded (Prologue / 1–29 Stars) | **Fire Orb**<br>**Water Orb**<br>**Wind Orb**<br>**Lightning Orb**<br>**Earth Orb**<br>**Fortune Orb**<br>**Prosperity Orb** | • Baseline tier-1 elemental magic.<br>• **Fortune**: Doubles EXP earned by bearer in combat.<br>• **Prosperity**: Doubles Potch awarded from battle victories. |
-| **Level 2** | Castle Expansion 1 (30–59 Stars) | **Resurrection Orb**<br>**Killer Orb**<br>**Spark Orb**<br>**Counter Orb**<br>**Clone Orb**<br>**Double-Jab Orb**<br>**Gale Orb**<br>**Haziness Orb**<br>**Phero (Pheromone) Orb** | • **Resurrection**: High-tier holy healing & revive spells.<br>• **Killer**: Doubles bearer's critical strike probability.<br>• **Spark**: Forces party turn order to follow bearer's speed.<br>• **Counter**: Drastically boosts physical counter-attack rate.<br>• **Clone**: Massive 3x damage single-target attack.<br>• **Double-Jab**: Chance to perform two consecutive physical hits.<br>• **Gale**: Doubles party travel speed and bearer combat agility.<br>• **Haziness**: Increases bearer physical evasion rate.<br>• **Phero**: Opposite-gender party member shields bearer from damage. |
+| **Level 2** | Castle Expansion 1 (30–59 Stars) | **Resurrection Orb**<br>**Killer Orb**<br>**Spark Orb**<br>**Counter Orb**<br>**Clone Orb**<br>**Double-Jab Orb**<br>**Gale Orb**<br>**Haziness Orb**<br>**Phero (Pheromone) Orb** | • **Resurrection**: High-tier holy healing & revive spells.<br>• **Killer**: Doubles bearer's critical strike probability.<br>• **Spark**: Forces party turn order to follow bearer's speed.<br>• **Counter**: Drastically boosts physical counter-attack rate.<br>• **Clone**: Massive 3x damage single-target attack.<br>• **Double-Jab**: Chance to perform two consecutive physical hits.<br>• **Gale**: Doubles bearer combat agility.<br>• **Haziness**: Increases bearer physical evasion rate.<br>• **Phero**: Opposite-gender party member shields bearer from damage. |
 | **Level 3** | Castle Expansion 2 (60–89 Stars) | **Rage Orb**<br>**Flowing Orb**<br>**Cyclone Orb**<br>**Mother Earth Orb**<br>**Thunder Orb** | • **Advanced Tier-4 High Magic Runes**.<br>• Unlocks devastating ultimate group-clearing spells and master-level recovery magic (Firestorm, Mother Earth, Shining Wind, Earthquake, Heavenly Thunder). |
 | **Level 4** | Castle Fully Built (90–108 Stars) | **Sunbeam Orb**<br>**Champion's Orb**<br>**Turtle Orb** | • **Master Utility & Quality of Life**.<br>• **Sunbeam**: Continuously regenerates HP with every step taken on maps.<br>• **Champion's**: Completely suppresses random wandering encounters with weak monster mobs.<br>• **Turtle**: Bestows permanent immunity against all status ailments (Sleep, Silence, Poison, Unbalance). |
-
----
-
-### 2. Progression by World Exploration & Town Discovery
-
-Whenever Tir visits a settlement or clears an area event point on the world map, Jeane immediately incorporates that town's local rune specialty orbs into her Toran Castle stock:
-
-| Region / Settlement | Map Code / Area | Town Rune Crystals Registered into Jeane's Shop |
-| :--- | :--- | :--- |
-| **Starter / Base Catalog** | *Unlocked by Default* | Fire Orb, Water Orb, Wind Orb, Lightning Orb, Earth Orb |
-| **Gregminster (Imperial Capital)** | `va` (Prologue) | Water Orb, Wind Orb, Lightning Orb |
-| **Lenankamp** | `vc` | Fire Orb, Water Orb, Wind Orb |
-| **Kaku** | `vd2` | Water Orb |
-| **Kouan** | `vd1` | Fire Orb, Earth Orb |
-| **Sarady** | `vb3` | Water Orb, Wind Orb, Earth Orb |
-| **Antei** | `vh` | Lightning Orb, Wind Orb |
-| **Rikon** | `vi` | Fire Orb, Water Orb |
-| **Warriors' Village** | `vj` | **Killer Orb**, Wind Orb |
-| **Kirov** | `vk` | Fire Orb, Earth Orb |
-| **Qlon Temple / Seek Valley** | `vl` | **Champion's Orb** |
-
-> **Note**: If an item is unlocked by both a town visit and a castle expansion tier (for example, the *Killer Orb* at Warriors' Village or Castle Level 2, or the *Champion's Orb* at Qlon Temple or Castle Level 4), Tir receives early access the moment either condition is satisfied!
 
 ---
 
