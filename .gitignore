@@ -5,3 +5,7 @@ build/
 *.suo
 .vs/
 
+# Local AI workspace rules (canonical copy tracked in PKCore)
+AGENTS.md
+.agents/
+
