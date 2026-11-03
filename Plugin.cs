@@ -6,7 +6,7 @@ using PKRuneSagePlus.Patches;
 
 namespace PKRuneSagePlus;
 
-[BepInPlugin("faospark.pkrunesageplus", "PK Rune Sage Plus", "1.0.0")]
+[BepInPlugin("faospark.pkrunesageplus", "PK Rune Sage Plus", "1.0.1")]
 [BepInDependency("faospark.pkcore", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("d3xMachina.suikoden_fix", BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : BasePlugin
