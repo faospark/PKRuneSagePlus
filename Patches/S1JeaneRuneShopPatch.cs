@@ -199,6 +199,15 @@ public static class S1JeaneRuneShopPatch
             catch { }
         }
 
+        // Baseline (Castle Level 1+): Add all 5 elemental weapon rune pieces (shards)
+        // Item IDs: 57 (Fire Piece), 58 (Water Piece), 59 (Wind Piece), 60 (Lightning Piece), 61 (Earth Piece)
+        byte[] elementalPieces = { 57, 58, 59, 60, 61 };
+        foreach (byte pieceId in elementalPieces)
+        {
+            if (!itemIds.Contains(pieceId))
+                itemIds.Add(pieceId);
+        }
+
         // Sort items for a clean, consistent store presentation
         itemIds.Sort();
         return itemIds.ToArray();
