@@ -1,4 +1,4 @@
-# PKRuneSagePlus (Suikoden I & II Rune Sage Enhancements)
+# P.K. - Rune Sage Plus
 
 A **BepInEx 6 (IL2CPP)** mod for **Suikoden I & II HD Remaster** (Steam) that enhances Rune Sage and Rune Shop mechanics across both games: transforming Jeane into a full-fledged Castle Rune Master shop in Suikoden I, and unlocking the endgame Sajah Village Rare Rune Shop early in Suikoden II.
 
@@ -74,72 +74,6 @@ As Tir recruits more of the 108 Stars of Destiny, Toran Castle grows in size and
 
 ---
 
-## Requirements
-
-1. **Suikoden I & II HD Remaster** (Steam edition, 64-bit Windows)
-2. **BepInEx 6.0 (Unity IL2CPP x64)**
-   - Download **[BepInEx-Unity.IL2CPP-win-x64-6.0.0-pre.2.zip](https://github.com/BepInEx/BepInEx/releases/download/v6.0.0-pre.2/BepInEx-Unity.IL2CPP-win-x64-6.0.0-pre.2.zip)**.
-
----
-
-## Installation Guide (Steam)
-
-### 1. Locate Game Root Directory
-In your Steam client:
-1. Open your **Library** and right-click **Suikoden I & II HD Remaster**.
-2. Select **Manage** → **Browse local files**.
-3. A file explorer window will open at your game's root directory:
-   ```text
-   ...\steamapps\common\Suikoden I and II HD Remaster\
-   ```
-   *(This folder contains `Suikoden I and II HD Remaster.exe` and game files).*
-
----
-
-### 2. Install BepInEx 6 (If not already installed)
-1. Download **[BepInEx-Unity.IL2CPP-win-x64-6.0.0-pre.2.zip](https://github.com/BepInEx/BepInEx/releases/download/v6.0.0-pre.2/BepInEx-Unity.IL2CPP-win-x64-6.0.0-pre.2.zip)**.
-2. Extract the contents of the ZIP archive directly into your **`Suikoden I and II HD Remaster`** root folder.
-3. You should see `doorstop_config.ini`, `winhttp.dll` (or `version.dll`), and the `BepInEx/` directory alongside the game executable.
-4. **Launch the game once via Steam**, then quit to desktop.
-   - This generates necessary IL2CPP interop assemblies and configuration directories.
-
----
-
-### 3. Install PKRuneSagePlus
-The release package is bundled with the complete directory structure for instant drag-and-drop installation.
-
-1. Download **`PKRuneSagePlus-vX.X.X.zip`** from [Releases](https://github.com/faospark/PKRuneSagePlus/releases) (or grab `PKRuneSagePlus.dll`).
-2. Open the ZIP archive. You will see a `BepInEx` folder.
-3. **Drag and drop the `BepInEx` folder directly into your game's root directory**:
-   ```text
-   Suikoden I and II HD Remaster/
-   ├── BepInEx/
-   │   ├── config/
-   │   │   └── faospark.pkrunesageplus.cfg (created automatically on first run)
-   │   └── plugins/
-   │       └── PKRuneSagePlus.dll
-   ├── doorstop_config.ini
-   └── Suikoden I and II HD Remaster.exe
-   ```
-4. If prompted by Windows, choose **Replace the files in the destination**.
-
----
-
-### 4. Verify Installation
-1. Start the game through Steam.
-2. Check `BepInEx/LogOutput.log` (or console if enabled). You will see:
-   ```text
-   [Info   :   BepInEx] Loading [PK Rune Sage Plus 1.0.0]
-   [Info   :PK Rune Sage Plus] Loading PKRuneSagePlus (Suikoden I & II Rune Sage Enhancements)...
-   [Info   :PK Rune Sage Plus] Applying Suikoden 1 Jeane Rune Shop expansion patch...
-   [Info   :PK Rune Sage Plus] Applying Suikoden 2 Sajah Village Rare Shop Early Unlock patch...
-   [Info   :PK Rune Sage Plus] PKRuneSagePlus loaded successfully!
-   ```
-3. In Suikoden 1, speak to Jeane at Toran Castle to view the expanded `[0] Attach`, `[1] Remove`, `[2] Buy`, `[3] Exit` menu.
-4. In Suikoden 2, enter Sajah Village item shop (`vj17`) to find the rare item vendor active and ready to trade!
-
----
-
 ## Configuration Options
 
 Edit `BepInEx/config/faospark.pkrunesageplus.cfg` with Notepad or any text editor:
@@ -162,30 +96,19 @@ UnlockSajahRareShopEarly = true
 
 ---
 
-## Building from Source
+## Installation
 
-Prerequisites:
-- [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) or newer
-- BepInEx 6.x IL2CPP installed in your game directory
-
-To compile:
-```bash
-dotnet build -c Release
-```
-
----
-
-## Community & Support
-
-Join the **Moogles & Mods** Discord community for updates, mod releases, technical support, and discussions:
-- **Discord**: [Moogles & Mods Discord](https://discord.gg/bSnpVBV)
+- **Prerequisite**: [BepInEx 6.0 (Unity IL2CPP x64)](https://github.com/BepInEx/BepInEx/releases/download/v6.0.0-pre.2/BepInEx-Unity.IL2CPP-win-x64-6.0.0-pre.2.zip) installed in your game root directory.
+- **Install**: Extract the release ZIP directly into your game's root directory (or place `PKRuneSagePlus.dll` into `BepInEx/plugins/`).
+- **Verify**: Launch the game; `BepInEx/LogOutput.log` will confirm `[PKRuneSagePlus] loaded successfully!`.
 
 ---
 
 ## Credits & Acknowledgments
 
-- **faospark**: Reverse engineering, IL2CPP in-memory byte-patching implementation (`MACHICON.EventInit`), dynamic shop flow reconstruction (`h_omise_c` & `h_monsyo_c`), and progressive world rune catalog design.
-- **Moogles & Mods Discord Community**: For testing, feedback, research, collaboration, and keeping the Suikoden modding scene thriving.
+- **[d3xMachina](https://github.com/d3xMachina/Suikoden-Fix)**: Creator of [Suikoden-Fix](https://github.com/d3xMachina/Suikoden-Fix). Bootstrapped the foundational BepInEx IL2CPP implementation and provided early inspiration for Remaster modding.
+- **[asilverthorn](https://github.com/asilverthorn/suikoden_ref)**: Creator of [suikoden_ref](https://github.com/asilverthorn/suikoden_ref). Invaluable early reference tables, internal IDs, and save structure research.
+- **[faospark](https://github.com/faospark)**: Primary Author & Lead Researcher.
+- **Moogles & Mods Discord Community**: For testing, feedback, research, collaboration, and keeping the Suikoden modding scene thriving. Join us on the [Moogles & Mods Discord](https://discord.com/invite/bSnpVBV).
 - **Framework**: [BepInEx](https://github.com/BepInEx/BepInEx) & [HarmonyX](https://github.com/BepInEx/HarmonyX).
-- **Konami**: For creating the legendary Suikoden series.
 
