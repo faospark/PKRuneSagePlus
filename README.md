@@ -1,4 +1,4 @@
-# P.K. - Rune Sage Plus
+﻿# P.K. - Rune Sage Plus
 
 A **BepInEx 6 (IL2CPP)** mod for **Suikoden I & II HD Remaster** (Steam) that enhances Rune Sage and Rune Shop mechanics across both games: transforming Jeane into a full-fledged Castle Rune Master shop in Suikoden I, and unlocking the endgame Sajah Village Rare Rune Shop early in Suikoden II.
 
@@ -112,3 +112,8 @@ UnlockSajahRareShopEarly = true
 - **Moogles & Mods Discord Community**: For testing, feedback, research, collaboration, and keeping the Suikoden modding scene thriving. Join us on the [Moogles & Mods Discord](https://discord.com/invite/bSnpVBV).
 - **Framework**: [BepInEx](https://github.com/BepInEx/BepInEx) & [HarmonyX](https://github.com/BepInEx/HarmonyX).
 
+---
+
+## License
+
+Distributed under the [MIT License](LICENSE).
