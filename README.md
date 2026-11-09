@@ -34,7 +34,8 @@ Runes represent the core magic and combat customization system in the Suikoden s
 
 ## Features
 
-### Suikoden I: Castle Rune Master (Jeane) Shop
+### Suikoden I: Castle Rune Master (Jeane) Shop & Remote Access
+- **Remote Castle Rune Master Access**: Press Right Stick Down (or keyboard `[F7]`) to open Jeane's Toran Castle rune shop directly from anywhere on the field, with robust state validation ensuring safety from battle, loading screen, or cutscene interruption. Optional requirement toggle for Jeane's recruitment.
 - **Native 4-Choice Menu**: Dynamically adjusts window geometry and text rows to present:
   - `[0] Attach`
   - `[1] Remove`
