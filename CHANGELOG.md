@@ -4,14 +4,14 @@ All notable changes to PKRuneSagePlus will be documented in this file.
 
 ---
 
-## [1.1.0] - 2026-11-09
+## [1.1.0] - 2026-11-12
 
 ### Added
 - **Remote Castle Rune Master Access for Suikoden 1 (`S1QuickRunePatch.cs`)**:
   - Migrated remote Rune Master access from PKCore into PKRuneSagePlus, consolidating all Suikoden 1 Rune Sage features under one mod.
   - Press Right Stick Down (or `[F7]` on keyboard) to open Jeane's Toran Castle rune shop directly from anywhere on the field.
   - Full field state validation, loading screen immunity, cutscene protection, and movement silencing during active shop sessions.
-  - Configurable via `EnableS1QuickRuneMaster` and `S1QuickRuneMasterRequireJeane` in `faospark.pkrunesageplus.cfg`.
+  - Configurable via `EnableS1QuickRuneMaster` (default `false`) and `S1QuickRuneMasterRequireJeane` (default `false`) in `faospark.pkrunesageplus.cfg`.
 
 ---
 

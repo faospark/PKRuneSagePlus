@@ -82,10 +82,20 @@ Edit `BepInEx/config/faospark.pkrunesageplus.cfg` with Notepad or any text edito
 ```ini
 [Suikoden 1 Rune Sage]
 
-## Expands Jeane's Castle Rune Master menu with a 'Buy' option (Attach, Remove, Buy, Exit). She acts as the Chandler of Runes, progressively selling Rune Crystals from town rune shops visited across the world.
+## Expands Jeane's Castle Rune Master menu with a 'Buy' option (Attach, Remove, Buy, Exit). She acts as the Chandler of Runes, progressively selling Rune Crystals unlocked as Toran Castle expands (Levels 1–4).
 # Setting type: Boolean
 # Default value: true
 EnableS1JeaneRuneShop = true
+
+## Press Right Stick Down (or [F7] on keyboard) to open the Toran Castle Rune Master (Jeane) directly from anywhere on the field, immune to glitches and softlocks.
+# Setting type: Boolean
+# Default value: false
+EnableS1QuickRuneMaster = false
+
+## When enabled, Remote Rune Master requires Jeane to be recruited in Antei before it can be accessed. Set to false to allow opening anytime without recruitment or castle restrictions.
+# Setting type: Boolean
+# Default value: false
+S1QuickRuneMasterRequireJeane = false
 
 [Suikoden 2 Rune Sage]
 

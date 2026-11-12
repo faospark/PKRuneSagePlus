@@ -31,7 +31,7 @@ public sealed class ModConfiguration
         EnableS1QuickRuneMaster = _config.Bind(
             "Suikoden 1 Rune Sage",
             "EnableS1QuickRuneMaster",
-            true,
+            false,
             "Press Right Stick Down (or [F7] on keyboard) to open the Toran Castle Rune Master (Jeane) directly from anywhere on the field, immune to glitches and softlocks."
         );
 
