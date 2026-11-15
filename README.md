@@ -1,4 +1,4 @@
-﻿# P.K. - Rune Sage Plus
+# P.K. - Rune Sage Plus
 
 **By [faospark](https://github.com/faospark)**
 
